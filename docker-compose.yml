@@ -1,0 +1,62 @@
+version: '3'
+
+services:
+  # nombre que se le va a dar al servicio, para por ejemplo identificarlo dentro de una 'network'
+  db:
+    # BASE DE DATOS POSTGRES
+    container_name: ${DB_NAME} # nombre del contenedor y que se usará como hostname dentro de la red
+    image: postgres:15.1
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=${DB_PASS}
+    networks:
+      - node_ts_network
+
+  pgAdmin:
+    # GESTOR DE BASE DE DATOS PG ADMIN
+    depends_on:
+      # para que levante debe existir otro servicio levantado que es el que se indica aquí
+      - db
+    image: dpage/pgadmin4:6.17
+    ports:
+      - "3001:80"
+    environment:
+      - PGADMIN_DEFAULT_PASSWORD=${DB_PASS}
+      - PGADMIN_DEFAULT_EMAIL=${POSTGRES_DEFAULT_EMAIL}
+    networks:
+      - node_ts_network
+
+  # API REST AUTENTICACIÓN NODE (Typescript)
+  # app:
+  #   container_name: node-ts-app
+  #   depends_on:
+  #     - db
+  #     - pgAdmin
+  #   # image: node-ts # --> Podemos hacerlo así. Si se hace sobre la imágen tras construirla manualmente. Descomentar y comentar dos siguietes lineas 
+  #   build:
+  #     dockerfile: Dockerfile # Podríamos indicar la imagen tras construir el dockerfile pero de esta forma si no está construñida, la construcción se hace en el compose
+  #   ports:
+  #     - ${APP_PORT}:${APP_PORT}
+  #   environment:
+  #     - APP_PORT=${APP_PORT}
+  #     - DB_NAME=${DB_NAME}
+  #     - DB_HOST=${DB_HOST}
+  #     - DB_PORT=${DB_PORT}
+  #     - DB_USER=${DB_USER}
+  #     - DB_PASS=${DB_PASS}
+  #     - JWT_SECRET=${JWT_SECRET}
+  #   restart: always
+  #   networks:
+  #     - node_ts_network
+
+volumes:
+  postgres-db:
+    # Si sólo pongo esto genera el volumen
+
+networks:
+  node_ts_network:

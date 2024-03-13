@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  # API REST AUTENTICACIÓN NODE (Typescript)
+  app:
+    container_name: node-ts-app
+    depends_on:
+      - db
+      - pgAdmin
+    image: node-ts
+    ports:
+      - ${APP_PORT}:${APP_PORT}
+    environment:
+      - APP_PORT=${APP_PORT}
+      - DB_NAME=${DB_NAME}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - JWT_SECRET=${JWT_SECRET}
+    restart: always
+    networks:
+      - my_network
+
+networks:
+  my_network:
+    external: true # Recordar crear previamente la red my network con 'docker create my_network'
+
+
