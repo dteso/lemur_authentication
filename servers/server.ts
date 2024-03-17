@@ -9,7 +9,6 @@ import cors from 'cors';
 import { dbConnector } from "../database/connection";
 import { swaggerDocs as V1SwaggerDocs } from '../api/swagger'
 import { createAssociations } from '../dal/models/associations';
-import dotenv from 'dotenv';
 
 
 const app = express();
@@ -62,17 +61,15 @@ class Server {
     }
 
     listen() {
-        dotenv.config();
         const port = process.env.APP_PORT || '4410';
         console.log("[INFO] Logs: " + process.env.LOGGING);
-        console.log(`[SUCCESS] CONNECTED to database [${process.env.DB_NAME}] - ip: ${process.env.DB_HOST}:${process.env.DB_PORT} whith user ${process.env.DB_USER}`);
+        console.log(`[SUCCESS] CONNECTED to database [${process.env.DB_NAME}] - IP/URI: [${process.env.DB_HOST}:${process.env.DB_PORT}] whith user [${process.env.DB_USER}]`);
         console.log("[WARNING] >>>> Attemting to serve on port: " + process.env.APP_PORT);
         app.listen(port, () => {
             console.log('[SUCCESS] SERVER RUNNING ON PORT: ' + port);
             V1SwaggerDocs(app, port);
         });
     }
-
 }
 
 

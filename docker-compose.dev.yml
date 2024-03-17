@@ -37,7 +37,7 @@ services:
     depends_on:
       - db
       - pgAdmin
-    image: node-ts
+    image: lemur_auth:v0.0.1
     ports:
       - ${APP_PORT}:${APP_PORT}
     environment:
@@ -48,6 +48,7 @@ services:
       - DB_USER=${DB_USER}
       - DB_PASS=${DB_PASS}
       - JWT_SECRET=${JWT_SECRET}
+      - PRODUCTION=${PRODUCTION}
     restart: always
     networks:
       - node_ts_network

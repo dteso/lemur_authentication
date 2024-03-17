@@ -39,5 +39,5 @@ RUN tsc
 
 EXPOSE 4410 ${APP_PORT}
 
-CMD ["npm", "run", "start:prod"]
+CMD ["npm", "start", ":prod"]
 
