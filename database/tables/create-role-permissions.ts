@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 async function createRolePermissionsTable() {
     dotenv.config();
     // Cargar el contenido del archivo SQL
-    const sqlFilePath = 'database/create-role-permissions.sql'; // Reemplaza esto con la ruta de tu archivo SQL
+    const sqlFilePath = 'database/scripts/create-role-permissions.sql'; // Reemplaza esto con la ruta de tu archivo SQL
     const sqlScript = fs.readFileSync(sqlFilePath, 'utf-8');
 
     // Configurar la conexión a la base de datos PostgreSQL
@@ -15,6 +15,7 @@ async function createRolePermissionsTable() {
         database: process.env.DB_NAME,
         password: process.env.DB_PASS,
         port: 5432, // Puerto predeterminado de PostgreSQL
+        ssl: true
     });
 
     try {

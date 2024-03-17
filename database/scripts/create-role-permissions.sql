@@ -22,4 +22,4 @@ CREATE TABLE IF NOT EXISTS public."role-permissions"
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public."role-permissions"
-    OWNER to postgres;
+    OWNER to lemurusers_owner;
