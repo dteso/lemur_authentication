@@ -26,7 +26,6 @@ class AuthService {
      * @returns 
      */
     async register(body: UserCreateDto): Promise<AuthResponseDto> {
-
         const { email, name, password, roleId } = body;
         let result: AuthResponseDto;
         try {
@@ -234,6 +233,32 @@ class AuthService {
         }
         next();
     }
+
+
+    async validateUpdateUser(req: any, res: any, next: NextFunction) {
+        const { name, email, password, status, roleId } = req.body;
+        const errors = [];
+        const nameValidationResult = name ? await AppValidator.validateName(req, res, name) : [];
+        const emailValidationResult = email ? await AppValidator.validateEmail(req, res, email) : [];
+        const passwordValidationResult = password ? await AppValidator.validatePassword(req, res, password) : [];
+        const statusValidationResult = status ? await AppValidator.validateStatus(req, res, status) : [];
+        const roleValidationResult = roleId ? await AppValidator.validateIsNumber(req, res, roleId) : [];
+        errors.push(
+            ...nameValidationResult,
+            ...emailValidationResult,
+            ...passwordValidationResult,
+            ...statusValidationResult,
+            ...roleValidationResult
+        );
+        if (errors.length) {
+            return res.status(422).json({
+                ok: !(errors.length > 0), // true if any error
+                errors
+            })
+        }
+        next();
+    }
+
 
     async validateLogin(req: any, res: any, next: NextFunction) {
         const { name, email, password } = req.body;
