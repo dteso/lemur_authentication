@@ -199,9 +199,11 @@ const authService = new AuthService();
  * 
  */
 router.post('/register', [authService.validateUser], AuthController.register);
-router.post('/login', [authService.validateLogin], AuthController.login);
-router.post('/token', [authService.validateRequiredToken], AuthController.validateToken);
-router.post('/change-password', [], AuthController.changePassword);
 
+router.post('/login', [authService.validateLogin], AuthController.login);
+
+router.post('/token', [authService.validateRequiredToken], AuthController.validateToken);
+
+router.post('/change-password', [], AuthController.changePassword);
 
 export default router;

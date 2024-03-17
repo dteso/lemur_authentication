@@ -20,6 +20,8 @@
 
 import { Router } from 'express';
 import PermissionController from '../controllers/permission.controller';
+import AuthValidator from '../middlewares/auth-validator';
+import AuthService from '../../services/auth.service';
 
 const router = Router();
 
@@ -127,12 +129,31 @@ const router = Router();
 *         description: Some server error
 *  
 */
+const authService = new AuthService();
 
-/* TODO: Sólo el usuario ADMIN puede hacer operaciones con permisos */
-router.get('/all', PermissionController.getPermissions);
-router.get('/get/:id', PermissionController.getPermission);
-router.post('/create', PermissionController.postPermission);
-router.put('/update/:id', PermissionController.putPermission);
-router.delete('/delete/:id', PermissionController.deletePermission);
+router.get('/all', [
+    authService.validateJWT,
+    AuthValidator.checkPermission('PERMISSION_LIST')
+], PermissionController.getPermissions);
+
+router.get('/get/:id', [
+    authService.validateJWT,
+    AuthValidator.checkPermission('PERMISSION_VIEW')
+], PermissionController.getPermission);
+
+router.post('/create', [
+    authService.validateJWT,
+    AuthValidator.checkPermission('PERMISSION_CREATE')
+], PermissionController.postPermission);
+
+router.put('/update/:id', [
+    authService.validateJWT,
+    AuthValidator.checkPermission('PERMISSION_EDITION')
+], PermissionController.putPermission);
+
+router.delete('/delete/:id', [
+    authService.validateJWT,
+    AuthValidator.checkPermission('PERMISSION_DELETE')
+], PermissionController.deletePermission);
 
 export default router;

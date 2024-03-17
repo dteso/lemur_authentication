@@ -95,7 +95,6 @@ import { Router } from 'express';
 import UserController from '../controllers/user.controller';
 import AuthService from '../../services/auth.service';
 import AuthValidator from '../middlewares/auth-validator';
-import { Permissions } from '../../core/consts/permissions';
 
 const router = Router();
 
@@ -139,7 +138,21 @@ const authService = new AuthService();
  *               $ref: '#/components/schemas/UserResponseDto'
  *       500:
  *         description: Some server error
- * 
+ *
+ * /api/users/get-self:
+ *   get:
+ *     summary: Retreives logged user
+ *     tags: [User]
+ *     responses:
+ *       200:
+ *         description: The retreived User
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UserResponseDto'
+ *       500:
+ *         description: Some server error 
+
  * /api/users/create:
  *   post:
  *     summary: Create a new user
@@ -205,9 +218,29 @@ const authService = new AuthService();
  *       500:
  *         description: Some server error
  * 
+  * /api/users/update-self:
+ *   put:
+ *     summary: Update logged user
+ *     tags: [User]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UserUpdateDto'
+ *     responses:
+ *       200:
+ *         description: The updated User.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UserResponseDto'
+ *       500:
+ *         description: Some server error
+ * 
  * /api/users/delete/{id}:
  *   delete:
- *     summary: Retreives an user by Id
+ *     summary: Deletes user by id
  *     tags: [User]
  *     parameters:
  *        - in: path
@@ -223,17 +256,68 @@ const authService = new AuthService();
  *               $ref: '#/components/schemas/UserResponseDto'
  *       500:
  *         description: Some server error
+ * 
+  * /api/users/delete-self:
+ *   delete:
+ *     summary: Deletes logged user
+ *     tags: [User]
+ *     responses:
+ *       200:
+ *         description: The retreived User
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UserResponseDto'
+ *       500:
+ *         description: Some server error
  *  
  */
 router.get('/all', [
     authService.validateJWT,
-    AuthValidator.checkPermission(Permissions.USER_FULL)
-], UserController.getUsers); // Sólo el administrador puede ver todos los usuarios
+    AuthValidator.checkPermission('USER_LIST')
+], UserController.getUsers);
 
-router.get('/get/:id', UserController.getUser); // Sólo puedes ver tu propio usuario a no ser que seas administrador
-router.post('/create', UserController.postUser); // Sólo el administrador puede crear usuarios directamente
-router.put('/update/:id', UserController.putUser); // Sólo se puede actualizar tu propio usuario no el de otro si tienes permisos de actualizar usuario, excepto el administrador
-router.delete('/delete/:id', UserController.deleteUser); // Para borrar un usuario se debe ser administrador
-router.patch('/assign-role', UserController.assignRoleToUserByIds); // Para asignar rol a un usuario se debe ser administrador
+router.get('/get/:id', [
+    authService.validateJWT,
+    AuthValidator.checkPermission('USER_VIEW')
+], UserController.getUser);
+
+router.get('/get-self', [
+    authService.validateJWT,
+    AuthValidator.checkPermission('USER_VIEW_SELF')
+], UserController.getSelfUser);
+
+router.post('/create', [
+    authService.validateJWT,
+    authService.validateUser,
+    AuthValidator.checkPermission('USER_CREATE')
+], UserController.postUser);
+
+router.put('/update/:id', [
+    authService.validateJWT,
+    authService.validateUpdateUser,
+    AuthValidator.checkPermission('USER_EDITION')
+], UserController.putUser);
+
+router.put('/update-self', [
+    authService.validateJWT,
+    authService.validateUpdateUser,
+    AuthValidator.checkPermission('USER_EDITION_SELF')
+], UserController.putSelfUser);
+
+router.delete('/delete/:id', [
+    authService.validateJWT,
+    AuthValidator.checkPermission('USER_DELETE')
+], UserController.deleteUser);
+
+router.delete('/delete-self', [
+    authService.validateJWT,
+    AuthValidator.checkPermission('USER_DELETE_SELF')
+], UserController.deleteSelfUser);
+
+router.patch('/assign-role', [
+    authService.validateJWT,
+    AuthValidator.checkPermission('USER_EDITION')
+], UserController.assignRoleToUserByIds);
 
 export default router;

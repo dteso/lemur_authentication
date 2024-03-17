@@ -37,6 +37,8 @@
 
 import { Router } from 'express';
 import RoleController from '../controllers/role.controller';
+import AuthValidator from '../middlewares/auth-validator';
+import AuthService from '../../services/auth.service';
 
 const router = Router();
 
@@ -206,14 +208,47 @@ const router = Router();
 * 
 */
 
-/* TODO: Sólo el usuario ADMIN puede hacer operaciones con roles */
-router.get('/all', RoleController.getRoles);
-router.get('/get/:id', RoleController.getRole);
-router.get('/get-by-name/:name', RoleController.getRoleByName);
-router.post('/create', RoleController.postRole);
-router.patch('/assign-permission', RoleController.assignPermissionToRoleUsingIds);
-router.patch('/assign-permissions', RoleController.assignPermissionsToRoleUsingIds);
-router.put('/update/:id', RoleController.putRole);
-router.delete('/delete/:id', RoleController.deleteRole);
+const authService = new AuthService();
+
+router.get('/all', [
+    authService.validateJWT,
+    AuthValidator.checkPermission('ROLE_LIST')
+], RoleController.getRoles);
+
+router.get('/get/:id', [
+    authService.validateJWT,
+    AuthValidator.checkPermission('ROLE_VIEW')
+], RoleController.getRole);
+
+router.get('/get-by-name/:name', [
+    authService.validateJWT,
+    AuthValidator.checkPermission('ROLE_VIEW')
+], RoleController.getRoleByName);
+
+router.post('/create', [
+    authService.validateJWT,
+    AuthValidator.checkPermission('ROLE_CREATE')
+], RoleController.postRole);
+
+router.patch('/assign-permission', [
+    authService.validateJWT,
+    AuthValidator.checkPermission('ROLE_EDITION')
+], RoleController.assignPermissionToRoleUsingIds);
+
+router.patch('/assign-permissions', [
+    authService.validateJWT,
+    AuthValidator.checkPermission('ROLE_EDITION')
+], RoleController.assignPermissionsToRoleUsingIds);
+
+router.put('/update/:id', [
+    authService.validateJWT,
+    AuthValidator.checkPermission('ROLE_EDITION')
+], RoleController.putRole);
+
+router.delete('/delete/:id', [
+    authService.validateJWT,
+    AuthValidator.checkPermission('ROLE_DELETE')
+], RoleController.deleteRole);
+
 
 export default router;
