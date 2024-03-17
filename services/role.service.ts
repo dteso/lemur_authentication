@@ -82,6 +82,9 @@ class RoleService {
      * @returns Promise<{@link RoleResponseDto}>
      */
     async updateRole(id: any, body: RoleRequestDto): Promise<RoleResponseDto> {
+        const roleName = (await this.roleRepository.getRoleById(id)).name;
+        if (roleName === 'ADMIN_ROLE' && body.name != null)
+            throw new ApplicationError("You can't update the admin role name, even if you have an admin role...", 403);
         const role = await this.roleRepository.updateRole(id, body);
         if (!role) {
             throw new ApplicationError('Not role found by Id', 404);
@@ -98,6 +101,9 @@ class RoleService {
      */
     async deleteRole(id: any) {
         try {
+            const roleName = (await this.roleRepository.getRoleById(id)).name;
+            if (roleName === 'ADMIN_ROLE')
+                throw new ApplicationError("You can't delete the admin role, even if you have an admin role...", 403);
             return await this.roleRepository.deleteRole(id);
         } catch (error: any) {
             if (error.name === 'SequelizeForeignKeyConstraintError') {

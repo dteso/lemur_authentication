@@ -75,7 +75,7 @@ class RoleController {
                 res.status(404).json({
                     status: 'NOT FOUND',
                     method: 'getRole',
-                    description: 'Not found role by requested Id.'
+                    description: 'ERROR Not found role by requested Id.'
                 })
             }
         } catch (e) {
@@ -105,7 +105,7 @@ class RoleController {
                 res.status(404).json({
                     status: 'NOT FOUND',
                     method: 'getRoleByName',
-                    description: 'Not found role by requested Id.'
+                    description: 'ERROR Not found role by requested Id.'
                 })
             }
         } catch (e) {
@@ -138,7 +138,7 @@ class RoleController {
                 res.status(404).json({
                     status: 'NOT FOUND',
                     method: 'putRole',
-                    description: 'ERROR: Updating Role. Not found role by requested Id'
+                    description: 'ERROR Updating Role. Not found role by requested Id'
                 })
             }
         } catch (e) {
@@ -170,7 +170,7 @@ class RoleController {
                 res.status(404).json({
                     status: 'NOT FOUND',
                     method: 'deleteRole',
-                    description: 'Deleting Role. Not found role by requested Id'
+                    description: 'ERROR Deleting Role. Not found role by requested Id'
                 })
             }
         } catch (e) {
