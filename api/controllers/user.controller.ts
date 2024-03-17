@@ -79,6 +79,31 @@ class UserController {
         }
     }
 
+
+    /**
+ * [r]
+ * Obtener Propio User / READ(id)
+ * 
+ * @param req 
+ * @param res 
+ */
+    static async getSelfUser(req: any, res: Response) {
+        try {
+            const userService = new UserService();
+            const user: UserResponseDto = await userService.getUser(req.user.id);
+            if (user) {
+                res.json({
+                    method: 'getSelfUser',
+                    user,
+                })
+            } else {
+                throw new ApplicationError("Not found user by requested Id.", 404);
+            }
+        } catch (e: unknown) {
+            ErrorsService.manageErrors(e, res);
+        }
+    }
+
     /**
      * [U]
      * Actualizar User / UPDATE
@@ -107,6 +132,32 @@ class UserController {
     }
 
     /**
+ * [U]
+ * Actualizar Propio User / UPDATE
+ * 
+ * @param req 
+ * @param res 
+ */
+    static async putSelfUser(req: any, res: Response) {
+        const { body } = req;
+        try {
+            const userService = new UserService();
+
+            const user: UserResponseDto = await userService.updateUser(req.user.id, body);
+            if (user) {
+                res.json({
+                    method: 'putSelfUser',
+                    user,
+                })
+            } else {
+                throw new ApplicationError("Not found user by requested Id.", 404);
+            }
+        } catch (e: unknown) {
+            ErrorsService.manageErrors(e, res);
+        }
+    }
+
+    /**
      * [D]
      * Eliminar User / DELETE
      * 
@@ -122,6 +173,31 @@ class UserController {
             if (user) {
                 res.json({
                     method: 'deleteUser',
+                    user,
+                })
+            } else {
+                throw new ApplicationError("Not found user by requested Id.", 404);
+            }
+        } catch (e: unknown) {
+            ErrorsService.manageErrors(e, res);
+        }
+    }
+
+    /**
+ * [D]
+ * Eliminar Propio User / DELETE
+ * 
+ * @param req 
+ * @param res 
+ */
+    static async deleteSelfUser(req: any, res: Response) {
+        try {
+            const userService = new UserService();
+
+            const user: UserResponseDto = await userService.deleteUser(req.user.id);
+            if (user) {
+                res.json({
+                    method: 'deleteSelfUser',
                     user,
                 })
             } else {
