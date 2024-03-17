@@ -116,7 +116,7 @@ class UserService {
         if (!user) {
             throw new ApplicationError('Not found user by id to assign role', 404);
         }
-        const role = await this.roleService.getRole(roleId);
+        const role = await this.roleService.getRoleDb(roleId);
         if (!role) {
             throw new ApplicationError('Not role found by for user assignation', 404);
         }
@@ -146,9 +146,7 @@ class UserService {
      */
     async mapToResponse(user: UserDto | any) {
         try {
-            const userRole = user.Role || user.role ?
-                user.Role || user.role
-                : await this.roleService.getRole(user.roleId);
+            const userRole = await this.roleService.getRole(user.roleId);
             if (user.password !== null && user.password !== undefined) {
                 delete user.password;
             }
