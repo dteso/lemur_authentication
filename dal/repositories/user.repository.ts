@@ -26,7 +26,7 @@ class UserRepository {
     }
 
     async deleteUser(id: any): Promise<void | null> {
-        const user = await User.findByPk(id, { include: [{ model: Role, as: 'role' }] });
+        const user = await User.findByPk(id);
         return user ? user.destroy() : null;
     }
 
