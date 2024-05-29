@@ -320,3 +320,26 @@ docker network inspect <RED>
 
 
 
+## 1. CREAR IMÁGEN
+
+    docker build --tag dtesop/lemur_auth_v0.0.2.
+
+## 2. SUBIR IMÁGEN A DOCKER HUB
+
+    docker push dtesop/lemur_auth:v0.0.2  
+
+## 3. LEVANTAR CONTENEDOR
+
+### DESARRROLLO
+
+    - PostgresDB
+    - PgAdmin
+    - AuthApp 
+
+### PRODUCCIÓN
+
+    docker compose -f docker-compose.prod.yml --env-file production.env up  
+
+- AuthApp
+
+  En el fichero de entorno production.env se especifican las variables de entrono con las que lanzar la aplicación. En este caso contra otra base de datos alojada en host externo.
